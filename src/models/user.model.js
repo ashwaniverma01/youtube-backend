@@ -35,6 +35,10 @@ const userSchema=new Schema(
                 required:true
             }
         ],
+        password: {
+            type: String,
+            required: [true, 'Password is required']
+        },
         refreshToken:{
             type:String
         }
@@ -44,10 +48,13 @@ const userSchema=new Schema(
 {timestamps:true})
 userSchema.pre("save", async function(next){
     if(!this.isModified("password")) return next();
+    console.log("Hash Password",this.password);
     this.password=await bcrypt.hash(this.password,10)
     next()
 })
 userSchema.methods.isPasswordCorrect=async function (password) {
+    console.log("password",password);
+    console.log("Hash Password",this.password);
     return await bcrypt.compare(password,this.password)
     
 }
